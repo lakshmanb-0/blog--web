@@ -4,7 +4,7 @@ export const currentUser = async () => {
     try {
         return await account.get()
     } catch (error) {
-        // throw error
+        throw error
     }
     return null
 }
@@ -13,7 +13,7 @@ export const createAccount = async (email: string, password: string, name: strin
     try {
         let userAccount = await account.create(uniqueId(), email, password, name);
         if (userAccount) {
-            await login(email, password)
+            return await userLogin(email, password)
         } else {
             console.log('error while create account');
             return userAccount
@@ -23,11 +23,13 @@ export const createAccount = async (email: string, password: string, name: strin
     }
 }
 
-export const login = async (email: string, password: string) => {
+export const userLogin = async (email: string, password: string) => {
     try {
         let userAccount = await account.createEmailPasswordSession(email, password);
+        console.log(userAccount);
+
         if (userAccount) {
-            return userAccount
+            return currentUser()
         } else {
             console.log('no user found');
         }
@@ -36,7 +38,7 @@ export const login = async (email: string, password: string) => {
     }
 }
 
-export const logout = async () => {
+export const userLogout = async () => {
     try {
         return await account.deleteSessions();
     } catch (error) {

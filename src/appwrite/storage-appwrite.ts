@@ -2,7 +2,7 @@ import conf from "@/conf/conf"
 import { storage, uniqueId } from "./index"
 import { ImageGravity } from "appwrite"
 
-export const createFile = async (file) => {
+export const createFile = async (file: any) => {
     try {
         return await storage.createFile(conf.APPWRITE_BUCKET_ID, uniqueId(), file)
     } catch (error) {
