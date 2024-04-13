@@ -1,15 +1,13 @@
 export type TypeCreatePost = {
     title: string
     content: string
-    featuredImage: string
-    status: boolean
+    status: string
 }
 
 export type TypeUpdatePost = {
     title: string
     content: string
-    featuredImage: string
-    status: boolean
+    status: string
     documentId: string
 }
 
@@ -26,4 +24,15 @@ export type TypeUser = {
     // emailVerification: boolean
     // phoneVerification: boolean
     accessedAt: string
+}
+export type TypePost = {
+    title: string,
+    content: string,
+    status: string,
+    $id: string,
+    $createdAt: string,
+    $updatedAt: string,
+    $permissions: string[],
+    $databaseId: string,
+    $collectionId: string
 }

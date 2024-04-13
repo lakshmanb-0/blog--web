@@ -1,4 +1,4 @@
-import { Logo, Modal } from "../"
+import { Logo, AuthModal } from "../"
 import { useState } from "react"
 import { LuPenSquare, IoPersonOutline } from "../reactIcons";
 import { Avatar, Button, Dropdown, Input } from 'antd';
@@ -9,19 +9,21 @@ import { userLogout } from "@/appwrite/auth-appwrite";
 import { logout } from "@/store/authSlice";
 import { RootState } from "@/store/store"
 import { useDispatch, useSelector } from "react-redux"
+import { getFileView } from "@/appwrite/storage-appwrite";
 
 
 const Navbar: React.FC = () => {
     const loggedIn = useSelector((state: RootState) => state.loggedIn)
     const [searchInput, setSearchInput] = useState<string>("")
     const { Search } = Input;
-    const [type, setType] = useState<string>('')
+    const [type, setType] = useState<{ title: string, type: string }>({ title: '', type: '' })
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const dispatch = useDispatch()
     const user = useSelector((state: RootState) => state.user);
     const navigate = useNavigate()
-    const handleModalOpen = (el: string) => {
-        setType(el);
+
+    const handleModalOpen = (title: string, type: string) => {
+        setType({ title: title, type: type });
         setIsModalOpen(true);
     }
 
@@ -67,25 +69,35 @@ const Navbar: React.FC = () => {
                 />
             </section>
             <section className="flex items-center gap-4">
-                <Button type="text" className="text-lg flex items-center" icon={<LuPenSquare size={20} />}>
+                <Button
+                    type="text"
+                    className="text-lg flex items-center"
+                    icon={<LuPenSquare size={20} />}
+                    onClick={() => !loggedIn ? handleModalOpen('Create an account to start writing', 'Sign up') : navigate('/new-story')}>
                     Write
                 </Button>
                 {!loggedIn
                     ? (
                         <>
-                            <Button className="rounded-lg bg-black" type="primary" onClick={() => handleModalOpen('Sign up')}>Sign up</Button>
-                            <Button className="rounded-lg" type="text" onClick={() => handleModalOpen('Sign in')}>Sign in</Button>
-                            <Modal type={type} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+                            <Button className="rounded-lg bg-black" type="primary" onClick={() => handleModalOpen('Join Us', 'Sign up')}>Sign up</Button>
+                            <Button className="rounded-lg" type="text" onClick={() => handleModalOpen('Welcome back', 'Sign in')}>Sign in</Button>
+                            <AuthModal type={type} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
                         </>
                     )
                     : <Dropdown menu={{ items }}>
-                        <Avatar src='https://images.pexels.com/photos/428364/pexels-photo-428364.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'>LB</Avatar>
+                        <Avatar src={getFileView(user.$id)} className="uppercase">{UserFirstTwoLetters(user.name)}</Avatar>
                     </Dropdown>
                 }
             </section>
         </nav>
     )
-
 }
 
 export default Navbar
+
+const UserFirstTwoLetters = (text: string) => {
+    let words = text.split(' ');
+    let firstLetter = words[0] ? words[0][0] : '';
+    let secondLetter = words[1] ? words[1][0] : '';
+    return firstLetter + secondLetter;
+}
