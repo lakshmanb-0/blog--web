@@ -1,31 +1,23 @@
-import conf from "./conf/conf";
-import { createAccount, currentUser, userLogin, userLogout } from "./appwrite/auth-appwrite";
-import {
-  createPost,
-  deletePost,
-  getPost,
-  listDocuments,
-  updatePost,
-} from "./appwrite/database-appwrite";
-
-import { useEffect, useState } from "react";
+import { currentUser } from "./appwrite/auth-appwrite";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "./store/authSlice";
 import { Outlet } from "react-router-dom";
-import { Navbar, Footer, Header } from "./components";
+import { Navbar, Footer } from "./components";
 import type { RootState } from "./store/store";
 import { Spin, message } from "antd";
-// import { createFile, getFilePreview, getFile, getFileView } from "./appwrite/storage-appwrite"
+import { setLoading } from "./store/loadingSlice";
 
 
 function App() {
-  const loggedIn = useSelector((state: RootState) => state.loggedIn)
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn)
+  const loading = useSelector((state: RootState) => state.loading.loading);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [_, contextHolder] = message.useMessage();
 
   useEffect(() => {
     const userCheck = async () => {
+      dispatch(setLoading(true))
       try {
         let user = await currentUser();
         if (user) {
@@ -33,23 +25,24 @@ function App() {
         } else {
           dispatch(logout());
         }
+
       } catch (error) { }
       finally {
-        setLoading(false);
+        dispatch(setLoading(false))
       }
     };
     userCheck()
   }, []);
 
   return (
-    <div>
-      <Navbar />
-      {loading
-        ? <div className="grid place-items-center w-full h-screen"> <Spin /> </div>
-        : <Outlet />}
-      <Footer />
-      {contextHolder}
-    </div>
+    <Spin spinning={loading} className="min-h-screen">
+      <div>
+        <Navbar />
+        <Outlet />
+        <Footer />
+        {contextHolder}
+      </div>
+    </Spin>
     // <div className="flex flex-col gap-3">
     //   <h1 className="font-bold ">{conf.APPWRITE_URL}</h1>
     //   <button className="font-bold" onClick={async () => console.log(await currentUser())}>curent</button>

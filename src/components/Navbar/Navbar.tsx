@@ -13,13 +13,12 @@ import { getFileView } from "@/appwrite/storage-appwrite";
 
 
 const Navbar: React.FC = () => {
-    const loggedIn = useSelector((state: RootState) => state.loggedIn)
+    const { loggedIn, user } = useSelector((state: RootState) => state.auth)
     const [searchInput, setSearchInput] = useState<string>("")
     const { Search } = Input;
     const [type, setType] = useState<{ title: string, type: string }>({ title: '', type: '' })
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const dispatch = useDispatch()
-    const user = useSelector((state: RootState) => state.user);
     const navigate = useNavigate()
 
     const handleModalOpen = (title: string, type: string) => {
@@ -95,7 +94,7 @@ const Navbar: React.FC = () => {
 
 export default Navbar
 
-const UserFirstTwoLetters = (text: string) => {
+export const UserFirstTwoLetters = (text: string) => {
     let words = text.split(' ');
     let firstLetter = words[0] ? words[0][0] : '';
     let secondLetter = words[1] ? words[1][0] : '';

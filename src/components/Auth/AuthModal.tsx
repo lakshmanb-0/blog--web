@@ -169,7 +169,7 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
                                         }
                                     ]}
                                 >
-                                    <Upload listType="picture-card" name='Upload' accept='image/*'
+                                    <Upload listType="picture-card" name='Upload' accept='.png, .jpg, .jpeg'
                                         maxCount={1}
                                         beforeUpload={() => false}
                                         showUploadList={{

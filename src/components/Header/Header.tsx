@@ -1,39 +1,40 @@
 import { listDocuments } from "@/appwrite/database-appwrite";
-import { getFilePreview } from "@/appwrite/storage-appwrite";
+import { setLoading } from "@/store/loadingSlice";
+import { setPosts } from "@/store/postSlice";
+import { RootState } from "@/store/store";
 import { TypePost } from "@/types/types";
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import PostCard from "../ui/PostCard";
 const Header = () => {
-    const [data, setData] = useState<TypePost[]>()
+    const dispatch = useDispatch()
+    const posts = useSelector((state: RootState) => state.post.posts)
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                let user = await listDocuments()
-                console.log(user);
-
-                if (user) {
-                    setData(user.documents);
+        if (posts.length > 0) return
+        else {
+            const fetchData = async () => {
+                dispatch(setLoading(true))
+                try {
+                    let postData = await listDocuments()
+                    if (postData) {
+                        dispatch(setPosts(postData.documents))
+                    }
+                } catch (error) {
+                    console.log('fetch posts', error);
                 }
-            } catch (error) { }
-            finally {
-                // setLoading(false);
-            }
-        };
-        fetchData()
+                finally {
+                    dispatch(setLoading(false))
+                }
+            };
+            fetchData()
+        }
     }, []);
 
-    console.log(data);
-
-
     return (
-        <header>
-            {data.map(el => (
-                <>
-                    <img src={getFilePreview(el.$id)} alt="" />
-                    {/* <img src={getFileView(el?.$id!)} alt="" /> */}
-                </>
-
+        <header className="grid md:grid-cols-2 gap-5">
+            {posts?.map((el: TypePost) => (
+                <PostCard key={el.$id} data={el} />
             ))}
         </header>
     );

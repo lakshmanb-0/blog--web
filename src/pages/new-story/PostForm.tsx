@@ -2,28 +2,44 @@ import { createPost } from "@/appwrite/database-appwrite";
 import { createFile } from "@/appwrite/storage-appwrite";
 import { PostEditor } from "@/components";
 import useToast from "@/hooks/useToast";
+import { setSinglePost } from "@/store/postSlice";
+import { RootState } from "@/store/store";
 import { Button, Form, Input, Select, Spin, Upload } from "antd"
 import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const PostForm = () => {
     const [form] = Form.useForm()
     const [loading, setLoading] = useState<boolean>(false);
     const showToast = useToast()
     const editorRef = useRef<any>(null);
-
+    const navigate = useNavigate()
+    console.log(editorRef.current?.getContent());
+    const user = useSelector((state: RootState) => state.auth.user)
+    const dispatch = useDispatch()
     const handleSubmit = async (data: { title: string, status: string, upload: any }) => {
         setLoading(true)
         console.log(data);
         try {
             let props = {
                 title: data.title,
-                content: editorRef.current.getContent(),
-                status: data.status
+                content: editorRef.current.getContent().toString(),
+                status: data.status,
+                userName: user.name
             }
+            console.log(props);
+
             if (editorRef.current) {
                 let post = await createPost(props);
                 data.upload && await createFile(post?.$id!, data.upload[0].originFileObj);
-                if (post) showToast('success', 'Post created'); form.resetFields()
+                if (post) {
+                    showToast('success', 'Post created');
+                    form.resetFields();
+                    dispatch(setSinglePost(post))
+                    navigate('/post/' + post?.$id)
+                }
+
             }
         } catch (error: any) {
             showToast('error', error.message)
@@ -77,7 +93,7 @@ const PostForm = () => {
                         }
                     ]}
                 >
-                    <Upload listType="picture-card" name='Upload' accept='image/*'
+                    <Upload listType="picture-card" name='Upload' accept='.png, .jpg, .jpeg'
                         maxCount={1}
                         beforeUpload={() => false}
                         showUploadList={{

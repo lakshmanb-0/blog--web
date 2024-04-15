@@ -1,7 +1,8 @@
 export type TypeCreatePost = {
     title: string
     content: string
-    status: string
+    status: string,
+    userName: string
 }
 
 export type TypeUpdatePost = {
@@ -28,6 +29,7 @@ export type TypeUser = {
 export type TypePost = {
     title: string,
     content: string,
+    userName: string,
     status: string,
     $id: string,
     $createdAt: string,

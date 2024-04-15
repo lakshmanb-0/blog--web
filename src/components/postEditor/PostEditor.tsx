@@ -2,7 +2,6 @@ import conf from '@/conf/conf'
 import { Editor } from '@tinymce/tinymce-react'
 import { Spin } from 'antd'
 import { useState } from 'react'
-
 const PostEditor = ({ editorValue }: { editorValue: any }) => {
     const [loading, setLoading] = useState(true)
 
@@ -11,10 +10,13 @@ const PostEditor = ({ editorValue }: { editorValue: any }) => {
             <section className={`${loading ? 'hidden' : ''} py-10`}>
                 <Editor
                     onLoadContent={() => setLoading(false)}
+
                     apiKey={conf.TINYMCE_API_KEY}
                     onInit={(_, editor) => editorValue.current = editor}
                     initialValue="<p>hello</p>"
+
                     init={{
+                        // content_css: 'css/content.css',
                         height: 500,
                         menubar: false,
                         plugins: [
@@ -26,6 +28,8 @@ const PostEditor = ({ editorValue }: { editorValue: any }) => {
                             'bold italic forecolor | alignleft aligncenter ' +
                             'alignright | bullist numlist | ' +
                             'removeformat  image',
+                        image_caption: true
+
                     }}
                 />
             </section>

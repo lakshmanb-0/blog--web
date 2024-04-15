@@ -21,7 +21,8 @@ export const createPost = async (props: TypeCreatePost) => {
         const response = await databases.createDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, uniqueId(), {
             title: props.title,
             content: props.content,
-            status: props.status
+            status: props.status,
+            userName: props.userName
         });
         return response
     } catch (error) {
