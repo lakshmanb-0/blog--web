@@ -2,13 +2,16 @@ export type TypeCreatePost = {
     title: string
     content: string
     status: string,
-    userName: string
+    ownerName: string,
+    ownerId: string,
+    imageId: string
 }
 
 export type TypeUpdatePost = {
     title: string
     content: string
     status: string
+    imageId: string
     documentId: string
 }
 
@@ -29,7 +32,8 @@ export type TypeUser = {
 export type TypePost = {
     title: string,
     content: string,
-    userName: string,
+    ownerId: string,
+    ownerName: string,
     status: string,
     $id: string,
     $createdAt: string,
@@ -37,4 +41,5 @@ export type TypePost = {
     $permissions: string[],
     $databaseId: string,
     $collectionId: string
+    imageId: string
 }

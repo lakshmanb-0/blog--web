@@ -6,12 +6,15 @@ import { Provider } from 'react-redux'
 import store from './store/store.ts'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import { Header, Post, PostForm } from './components'
+import Profile from './pages/profile/Profile.tsx'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path="/" element={<App />}>
     <Route path="" element={<Header />} />
-    <Route path="/new-story" element={<PostForm />} />
-    <Route path="/post/:slug" element={<Post />} />
+    <Route path="/new-story/" element={<PostForm type="create" />} />
+    <Route path="/post/:postId" element={<Post />} />
+    <Route path="/post/:postId/edit/:userId" element={<PostForm type="edit" />} />
+    <Route path="/profile" element={<Profile />} />
   </Route>
 ))
 

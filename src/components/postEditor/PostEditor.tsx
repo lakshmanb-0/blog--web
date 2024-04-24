@@ -2,7 +2,7 @@ import conf from '@/conf/conf'
 import { Editor } from '@tinymce/tinymce-react'
 import { Spin } from 'antd'
 import { useState } from 'react'
-const PostEditor = ({ editorValue }: { editorValue: any }) => {
+const PostEditor = ({ editorValue, initialValue }: { editorValue: any, initialValue: string }) => {
     const [loading, setLoading] = useState(true)
 
     return (
@@ -13,7 +13,7 @@ const PostEditor = ({ editorValue }: { editorValue: any }) => {
 
                     apiKey={conf.TINYMCE_API_KEY}
                     onInit={(_, editor) => editorValue.current = editor}
-                    initialValue="<p>hello</p>"
+                    initialValue={initialValue}
 
                     init={{
                         // content_css: 'css/content.css',

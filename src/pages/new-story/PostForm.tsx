@@ -1,45 +1,97 @@
-import { createPost } from "@/appwrite/database-appwrite";
-import { createFile } from "@/appwrite/storage-appwrite";
+import { uniqueId } from "@/appwrite";
+import { createPost, updatePost } from "@/appwrite/database-appwrite";
+import { createFile, getFile, getFileView, updateFile } from "@/appwrite/storage-appwrite";
 import { PostEditor } from "@/components";
 import useToast from "@/hooks/useToast";
-import { setSinglePost } from "@/store/postSlice";
+import { addPost, setSinglePost } from "@/store/postSlice";
 import { RootState } from "@/store/store";
 import { Button, Form, Input, Select, Spin, Upload } from "antd"
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const PostForm = () => {
+const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
     const [form] = Form.useForm()
+    const user = useSelector((state: RootState) => state.auth.user)
     const [loading, setLoading] = useState<boolean>(false);
     const showToast = useToast()
     const editorRef = useRef<any>(null);
     const navigate = useNavigate()
-    console.log(editorRef.current?.getContent());
-    const user = useSelector((state: RootState) => state.auth.user)
     const dispatch = useDispatch()
+    const location = useLocation()
+    console.log(location?.state);
+
+    useEffect(() => {
+        if (type === 'edit') {
+            form.setFieldsValue(
+                {
+                    'title': location?.state?.title,
+                    'status': location?.state?.status,
+                    'upload': location?.state?.imageId
+                        ? [
+                            {
+                                uid: 1,
+                                size: 10,
+                                url: getFileView(location?.state?.imageId),
+                            }
+                        ]
+                        : [],
+                }
+            )
+        }
+        else {
+            form.resetFields();
+            form.setFieldValue('status', 'public');
+        }
+    }, [type])
+
+
+
     const handleSubmit = async (data: { title: string, status: string, upload: any }) => {
         setLoading(true)
         console.log(data);
+        console.log(uniqueId());
+
         try {
             let props = {
                 title: data.title,
                 content: editorRef.current.getContent().toString(),
                 status: data.status,
-                userName: user.name
+                ownerName: user.name,
+                ownerId: user.$id,
+                documentId: location?.state?.$id,
             }
             console.log(props);
 
             if (editorRef.current) {
-                let post = await createPost(props);
-                data.upload && await createFile(post?.$id!, data.upload[0].originFileObj);
-                if (post) {
-                    showToast('success', 'Post created');
-                    form.resetFields();
-                    dispatch(setSinglePost(post))
-                    navigate('/post/' + post?.$id)
+                if (!!location?.state?.$id) { // update post
+
+                    let ImageId = (data?.upload?.[0]?.originFileObj || location?.state?.imageId) && await updateFile(location?.state?.imageId, data?.upload?.[0]?.originFileObj ?? null);
+                    console.log('ImageId availaebl', ImageId);
+                    let file = await getFile(location?.state?.imageId);
+
+                    let post = await updatePost({ ...props, imageId: !!ImageId ? ImageId?.$id : file ? location?.state?.imageId : null });
+
+                    if (post) {
+                        showToast('success', 'post updated successfully');
+                        form.resetFields();
+                        dispatch(setSinglePost(post))
+                        post.status === 'public' && dispatch(addPost(post))
+                        navigate('/post/' + post?.$id)
+                    }
                 }
 
+                else { //create post
+                    let ImageId = data?.upload?.[0]?.originFileObj && await createFile(data.upload[0].originFileObj);
+                    let post = await createPost({ ...props, imageId: ImageId?.$id });
+                    if (post) {
+                        showToast('success', 'Post created');
+                        form.resetFields();
+                        dispatch(setSinglePost(post))
+                        post.status === 'public' && dispatch(addPost(post))
+                        navigate('/post/' + post?.$id)
+                    }
+                }
             }
         } catch (error: any) {
             showToast('error', error.message)
@@ -48,9 +100,12 @@ const PostForm = () => {
             setLoading(false)
         }
     };
-    return (
+
+    return (location.pathname.includes(user.$id) || location.pathname === '/new-story') ? (
         <Spin spinning={loading}>
-            <Form form={form} onFinish={handleSubmit} className="px-4 py-10">
+            <Form form={form}
+                onFinish={handleSubmit}
+                className="px-4 py-10">
                 <Form.Item
                     name='title'
                     rules={[
@@ -80,6 +135,8 @@ const PostForm = () => {
                         {
                             required: false,
                             validator(_, fileList) {
+                                console.log(fileList);
+
                                 if (!fileList || fileList.length === 0) {
                                     return Promise.resolve(); // No file uploaded, validation passes
                                 } else {
@@ -99,14 +156,18 @@ const PostForm = () => {
                         showUploadList={{
                             showPreviewIcon: false,
                         }}
+                        onChange={info => {
+                            console.log(info);
+
+                        }}
                     >
                         Upload
                     </Upload>
                 </Form.Item>
 
-                <PostEditor editorValue={editorRef} />
+                <PostEditor editorValue={editorRef} initialValue={location?.state?.content ?? ''} />
 
-                <Form.Item name='status' initialValue='public' label='Status'>
+                <Form.Item name='status' label='Status'>
                     <Select
                         style={{ width: 120 }}
                         options={[
@@ -131,6 +192,7 @@ const PostForm = () => {
             </Form>
         </Spin>
     )
+        : <div>you are not allowed to edit this post</div>
 }
 
 export default PostForm

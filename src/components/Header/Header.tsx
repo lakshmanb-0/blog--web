@@ -17,6 +17,8 @@ const Header = () => {
                 dispatch(setLoading(true))
                 try {
                     let postData = await listDocuments()
+                    console.log(postData);
+
                     if (postData) {
                         dispatch(setPosts(postData.documents))
                     }

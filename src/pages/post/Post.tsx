@@ -12,7 +12,7 @@ import UserBar from "@/components/ui/UserBar";
 
 const Post = () => {
     const post = useSelector((state: RootState) => state.post.singlePost);
-    const { slug } = useParams()
+    const { postId } = useParams()
     const dispatch = useDispatch()
 
     console.log(post);
@@ -23,8 +23,8 @@ const Post = () => {
         else {
             dispatch(setLoading(true))
             const fetchPost = async () => {
-                console.log(slug);
-                let data = await getPost(slug ?? '')
+                console.log(postId);
+                let data = await getPost(postId ?? '')
                 data && dispatch(setSinglePost(data))
             }
             fetchPost()
@@ -36,7 +36,7 @@ const Post = () => {
         <section className="flex flex-col items-center max-w-3xl mx-auto ">
             <h1 className="text-4xl sm:text-5xl font-extrabold py-5 text-center">{post.title ?? ''}</h1>
             <UserBar post={post} variant='vertical' />
-            <img src={getFileView(post.$id ?? '')} alt="" className="py-5" />
+            {post.imageId && <img src={getFileView(post.imageId ?? '')} alt="" className="py-5" />}
             <section className="w-full px-3 text-lg sm:text-xl postStyle">
                 {parse(`${post?.content ?? ''}`)}
             </section>

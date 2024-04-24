@@ -19,15 +19,17 @@ const PostCard = ({ data }: { data: TypePost }) => {
         const first100Characters = contentWithoutTags.substring(0, 800);
         return first100Characters
     }
+    // console.log(getFilePreview(data.$id));
+
     return (
-        <div onClick={handlePostEvent} key={data.$id} className="cursor-pointer py-10">
+        <div key={data.$id} className="cursor-pointer py-10">
             <UserBar post={data} variant='horizontal' />
-            <div className="flex gap-4">
+            <div className="flex gap-4" onClick={handlePostEvent}>
                 <div className="overflow-hidden flex-1">
                     <h1 className="font-bold text-lg py-2">{data.title}</h1>
                     <p className="line-clamp-5 text-base">{handleContentData()}</p>
                 </div>
-                <img src={getFilePreview(data.$id)} alt="" className="size-40 object-cover" />
+                {data.imageId && <img src={getFileView(data.imageId)} alt="" className="size-40 object-cover" />}
                 {/* <img src={getFileView(data?.$id!)} alt="" className='size-40 object-cover' /> */}
 
             </div>

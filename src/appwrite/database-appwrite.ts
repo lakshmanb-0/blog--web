@@ -1,15 +1,21 @@
 import conf from "@/conf/conf";
 import { databases, uniqueId } from "./index";
 import { TypeCreatePost, TypeUpdatePost } from "@/types/types";
-// import { Query } from "appwrite";
+import { Query } from "appwrite";
 
 
-export const listDocuments = async () => {
+export const listDocuments = async (userId?: string) => {
     try {
         // let query = Query.equal("status", "public")
-        const response = await databases.listDocuments(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, [
-            // Query.equal('title', 'hello world')
-        ]);
+        const response = await databases.listDocuments(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID,
+            [
+                Query.orderDesc('$createdAt'),
+                userId
+                    ? Query.equal('ownerId', `${userId}`) :
+                    Query.equal('status', ['public']),
+
+            ]
+        );
         return response
     } catch (error) {
         throw error
@@ -17,12 +23,16 @@ export const listDocuments = async () => {
 }
 
 export const createPost = async (props: TypeCreatePost) => {
+    console.log(props);
+
     try {
         const response = await databases.createDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, uniqueId(), {
             title: props.title,
             content: props.content,
             status: props.status,
-            userName: props.userName
+            ownerName: props.ownerName,
+            ownerId: props.ownerId,
+            imageId: props?.imageId ?? null
         });
         return response
     } catch (error) {
@@ -30,11 +40,14 @@ export const createPost = async (props: TypeCreatePost) => {
     }
 }
 
-export const updatePost = async ({ props }: { props: TypeUpdatePost }) => {
+export const updatePost = async (props: TypeUpdatePost) => {
+    console.log(props);
     try {
         const response = await databases.updateDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, props.documentId, {
             title: props.title,
             content: props.content,
+            status: props.status,
+            imageId: props?.imageId ?? null
         });
         return response
     } catch (error) {
