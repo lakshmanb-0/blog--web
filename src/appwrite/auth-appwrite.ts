@@ -6,7 +6,6 @@ export const currentUser = async () => {
     } catch (error) {
         throw error
     }
-    return null
 }
 
 export const createAccount = async (email: string, password: string, name: string) => {

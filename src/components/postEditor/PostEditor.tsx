@@ -22,12 +22,13 @@ const PostEditor = ({ editorValue, initialValue }: { editorValue: any, initialVa
                         plugins: [
                             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'codesample', 'preview'
                         ],
                         toolbar: 'undo redo | blocks | ' +
                             'bold italic forecolor | alignleft aligncenter ' +
                             'alignright | bullist numlist | ' +
-                            'removeformat  image',
+                            'removeformat  image codesample | preview ',
+
                         image_caption: true
 
                     }}

@@ -3,7 +3,6 @@ import { storage, uniqueId } from "./index"
 
 export const createFile = async (file: any) => {
     console.log(file);
-
     try {
         return !!file && await storage.createFile(conf.APPWRITE_BUCKET_ID, uniqueId(), file)
     } catch (error) {

@@ -1,13 +1,11 @@
 import { getPost } from "@/appwrite/database-appwrite";
-import { getFile, getFileView } from "@/appwrite/storage-appwrite";
-import { setLoading } from "@/store/loadingSlice";
-import { setSinglePost } from "@/store/postSlice";
-import { RootState } from "@/store/store"
+import { getFileView } from "@/appwrite/storage-appwrite";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom";
 import parse from 'html-react-parser';
 import './postStyles.css'
+import { RootState, setLoading, setSinglePost } from "@/store";
 import UserBar from "@/components/ui/UserBar";
 
 const Post = () => {

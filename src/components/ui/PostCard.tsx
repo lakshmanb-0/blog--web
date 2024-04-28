@@ -1,11 +1,14 @@
-import { setSinglePost } from '@/store/postSlice'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import UserBar from './UserBar'
-import { getFilePreview, getFileView } from '@/appwrite/storage-appwrite'
+import { getFilePreview } from '@/appwrite/storage-appwrite'
 import { TypePost } from '@/types/types'
+import { setSinglePost } from '@/store'
 
-const PostCard = ({ data }: { data: TypePost }) => {
+type Props = {
+    data: TypePost
+}
+const PostCard: React.FC<Props> = ({ data }) => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -13,13 +16,12 @@ const PostCard = ({ data }: { data: TypePost }) => {
         dispatch(setSinglePost(data))
         navigate(`/post/${data.$id}`)
     }
+
     const handleContentData = () => {
         const content = `${data?.content ?? ''}`;
         const contentWithoutTags = content.replace(/<[^>]*>/g, '').replace(/&([^;]+);/g, ' '); // Remove HTML tags
-        const first100Characters = contentWithoutTags.substring(0, 800);
-        return first100Characters
+        return contentWithoutTags.substring(0, 800);
     }
-    // console.log(getFilePreview(data.$id));
 
     return (
         <div key={data.$id} className="cursor-pointer py-10">
@@ -29,12 +31,8 @@ const PostCard = ({ data }: { data: TypePost }) => {
                     <h1 className="font-bold text-lg py-2">{data.title}</h1>
                     <p className="line-clamp-5 text-base">{handleContentData()}</p>
                 </div>
-                {data.imageId && <img src={getFileView(data.imageId)} alt="" className="size-40 object-cover" />}
-                {/* <img src={getFileView(data?.$id!)} alt="" className='size-40 object-cover' /> */}
-
+                {data.imageId && <img src={getFilePreview(data.imageId)} alt="" className="size-40 object-cover" />}
             </div>
-
-            {/* <img src={getFileView(data?.$id!)} alt="" /> */}
         </div>
     )
 }

@@ -1,25 +1,23 @@
 import { Logo, AuthModal } from "../"
 import { useState } from "react"
 import { LuPenSquare, IoPersonOutline } from "../reactIcons";
-import { Avatar, Button, Dropdown, Input } from 'antd';
-import type { MenuProps } from 'antd';
+import { type MenuProps, Avatar, Button, Dropdown, Input } from 'antd';
 import { Link, useNavigate } from "react-router-dom";
 import { userLogout } from "@/appwrite/auth-appwrite";
-
-import { logout } from "@/store/authSlice";
-import { RootState } from "@/store/store"
-import { useDispatch, useSelector } from "react-redux"
 import { getFileView } from "@/appwrite/storage-appwrite";
+import { useDispatch, useSelector } from "react-redux"
+import { RootState, logout } from "@/store";
 
 
 const Navbar: React.FC = () => {
     const { loggedIn, user } = useSelector((state: RootState) => state.auth)
-    const [searchInput, setSearchInput] = useState<string>("")
-    const { Search } = Input;
+    const [searchInput, setSearchInput] = useState<string>('')
     const [type, setType] = useState<{ title: string, type: string }>({ title: '', type: '' })
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { Search } = Input;
+
 
     const handleModalOpen = (title: string, type: string) => {
         setType({ title: title, type: type });
@@ -72,7 +70,11 @@ const Navbar: React.FC = () => {
                     type="text"
                     className="text-lg flex items-center"
                     icon={<LuPenSquare size={20} />}
-                    onClick={() => !loggedIn ? handleModalOpen('Create an account to start writing', 'Sign up') : navigate('/new-story')}>
+                    onClick={() => !
+                        loggedIn
+                        ? handleModalOpen('Create an account to start writing', 'Sign up')
+                        : navigate('/new-story')}
+                >
                     Write
                 </Button>
                 {!loggedIn
@@ -84,7 +86,7 @@ const Navbar: React.FC = () => {
                         </>
                     )
                     : <Dropdown menu={{ items }}>
-                        <Avatar src={getFileView(user.$id)} className="uppercase">{UserFirstTwoLetters(user.name)}</Avatar>
+                        <Avatar src={getFileView(user.$id)} className="uppercase">{userFirstTwoLetters(user.name)}</Avatar>
                     </Dropdown>
                 }
             </section>
@@ -92,9 +94,9 @@ const Navbar: React.FC = () => {
     )
 }
 
-export default Navbar
+export default Navbar;
 
-export const UserFirstTwoLetters = (text: string) => {
+export const userFirstTwoLetters = (text: string) => {
     let words = text.split(' ');
     let firstLetter = words[0] ? words[0][0] : '';
     let secondLetter = words[1] ? words[1][0] : '';

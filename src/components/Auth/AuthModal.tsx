@@ -35,7 +35,7 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
             let userDetails;
             if (modalType.type === 'Sign up') { // If sign up then create account 
                 userDetails = await createAccount(data.email, data.password, data.name)
-                data.upload && await createFile(userDetails?.$id!, data.upload[0].originFileObj); //image upload if image selected
+                data.upload && await createFile(data.upload[0].originFileObj); //image upload if image selected
             }
             else userDetails = await userLogin(data.email, data.password);  // else login
 
