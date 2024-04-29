@@ -1,5 +1,5 @@
 import { deleteFile, getFileView } from '@/appwrite/storage-appwrite';
-import { Avatar, Button, Popconfirm } from 'antd';
+import { Avatar, Popconfirm } from 'antd';
 import { userFirstTwoLetters } from '../Navbar/Navbar';
 import { TypePost } from '@/types/types';
 import moment from 'moment'
@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePost } from '@/appwrite/database-appwrite';
 import { RootState, removePost } from '@/store';
-
+import { MdDelete, MdModeEditOutline } from '../reactIcons'
 type Props = {
     post: TypePost
     variant: string
@@ -19,13 +19,13 @@ const UserBar: React.FC<Props> = ({ post, variant }) => {
     const dispatch = useDispatch()
     const location = useLocation()
 
-    const handleEditDocument = async () => {
+    const handleEditDocument = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation()
         navigate(`/post/${post.$id}/edit/${post.ownerId}`, { state: { ...post } })
     }
-    console.log(location);
+    // console.log(location);
 
     const handleDeleteDocument = async () => {
-        console.log(post.$id);
         await deletePost(post.$id!)
         post.imageId && await deleteFile(post.imageId) // delete image
         dispatch(removePost(post.$id!))
@@ -42,17 +42,20 @@ const UserBar: React.FC<Props> = ({ post, variant }) => {
                 <p className='text-[#707070] text-sm'>{moment(post.$createdAt).format('LL')}</p>
             </div>
             {
-                (location.pathname != `/` && post.ownerId == user.$id) && (
-                    <div className='ml-auto'>
-                        <button onClick={handleEditDocument}>edit</button>
+                (location.pathname != '/' && post.ownerId == user.$id) && (
+                    <div className='ml-auto flex gap-1 '>
+                        <button onClick={handleEditDocument} className='hover:animate-bounce cursor-pointer' title='Edit'>
+                            <MdModeEditOutline size={20} color='green' />
+                        </button>
                         <Popconfirm
                             title="Delete the task"
                             description="Are you sure to delete this task?"
                             onConfirm={handleDeleteDocument}
                             okText="Yes"
                             cancelText="No"
+                            className='hover:animate-bounce'
                         >
-                            <Button danger>Delete</Button>
+                            <MdDelete color='red' size={20} className='cursor-pointer' title='Delete' />
                         </Popconfirm>
                     </div>
                 )

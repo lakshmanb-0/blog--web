@@ -1,10 +1,8 @@
-import { uniqueId } from "@/appwrite";
 import { createPost, updatePost } from "@/appwrite/database-appwrite";
 import { createFile, getFile, getFileView, updateFile } from "@/appwrite/storage-appwrite";
 import { PostEditor } from "@/components";
 import useToast from "@/hooks/useToast";
-import { addPost, setSinglePost } from "@/store/postSlice";
-import { RootState } from "@/store/store";
+import { RootState, addPost, setSinglePost } from "@/store";
 import { Button, Form, Input, Select, Spin, Upload } from "antd"
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +17,7 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const location = useLocation()
-    console.log(location?.state);
+    // console.log(location?.state);
 
     useEffect(() => {
         if (type === 'edit') {
@@ -46,12 +44,9 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
     }, [type])
 
 
-
     const handleSubmit = async (data: { title: string, status: string, upload: any }) => {
         setLoading(true)
-        console.log(data);
-        console.log(uniqueId());
-
+        // console.log(data);
         try {
             let props = {
                 title: data.title,
@@ -61,13 +56,13 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
                 ownerId: user.$id,
                 documentId: location?.state?.$id,
             }
-            console.log(props);
+            // console.log(props);
 
             if (editorRef.current) {
                 if (!!location?.state?.$id) { // update post
-
+                    if (location?.state.ownerId != user.$id) return showToast('error', 'You are not authorized to update this post');
                     let ImageId = (data?.upload?.[0]?.originFileObj || location?.state?.imageId) && await updateFile(location?.state?.imageId, data?.upload?.[0]?.originFileObj ?? null);
-                    console.log('ImageId availaebl', ImageId);
+                    // console.log('ImageId availaebl', ImageId);
                     let file = await getFile(location?.state?.imageId);
 
                     let post = await updatePost({ ...props, imageId: !!ImageId ? ImageId?.$id : file ? location?.state?.imageId : null });
@@ -135,7 +130,7 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
                         {
                             required: false,
                             validator(_, fileList) {
-                                console.log(fileList);
+                                // console.log(fileList);
 
                                 if (!fileList || fileList.length === 0) {
                                     return Promise.resolve(); // No file uploaded, validation passes
@@ -155,10 +150,6 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
                         beforeUpload={() => false}
                         showUploadList={{
                             showPreviewIcon: false,
-                        }}
-                        onChange={info => {
-                            console.log(info);
-
                         }}
                     >
                         Upload

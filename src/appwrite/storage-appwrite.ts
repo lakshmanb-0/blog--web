@@ -2,7 +2,7 @@ import conf from "@/conf/conf"
 import { storage, uniqueId } from "./index"
 
 export const createFile = async (file: any) => {
-    console.log(file);
+    // console.log(file);
     try {
         return !!file && await storage.createFile(conf.APPWRITE_BUCKET_ID, uniqueId(), file)
     } catch (error) {
@@ -22,8 +22,6 @@ export const getFile = async (fileId: string) => {
 export const updateFile = async (fileId: string, file: any) => {
     try {
         !!fileId && await deleteFile(fileId)
-        console.log('delet');
-
         return await createFile(file)
     } catch (error) {
         throw error

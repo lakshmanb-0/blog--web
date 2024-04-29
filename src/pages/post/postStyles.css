@@ -12,7 +12,7 @@
     }
 
     h2, h3, h4, h5, h6 {
-        @apply pt-3
+        @apply pt-3 font-semibold
     }
 
     figure {
@@ -36,7 +36,7 @@
     }
 
     pre {
-        @apply bg-[#282C34] rounded text-white text-lg w-full p-4
+        @apply bg-[#282C34] rounded text-white text-lg w-full p-4 select-none whitespace-break-spaces
     }
 
     pre code {
@@ -44,11 +44,62 @@
     }
 
     ol {
-        @apply list-disc px-6
+        @apply list-decimal px-6
+    }
+
+    ul {
+        @apply list-disc px-6 py-2
     }
 
     li {
         @apply list-outside
+    }
+
+    table {
+        @apply border-collapse;
+    }
+
+    /* Apply a default padding if legacy cellpadding attribute is missing */
+    table:not([cellpadding]) th,
+    table:not([cellpadding]) td {
+        @apply p-2
+    }
+
+    /* Set default table styles if a table has a positive border attribute
+         and no inline css */
+    table[border]:not([border="0"]):not([style*="border-width"]) th,
+    table[border]:not([border="0"]):not([style*="border-width"]) td {
+        @apply border-[1px]
+    }
+
+    /* Set default table styles if a table has a positive border attribute
+         and no inline css */
+    table[border]:not([border="0"]):not([style*="border-style"]) th,
+    table[border]:not([border="0"]):not([style*="border-style"]) td {
+        @apply border-solid
+    }
+
+    /* Set default table styles if a table has a positive border attribute
+         and no inline css */
+    table[border]:not([border="0"]):not([style*="border-color"]) th,
+    table[border]:not([border="0"]):not([style*="border-color"]) td {
+        @apply border-[#ccc]
+    }
+
+    hr {
+        @apply border-[#ccc] border-solid border-t-[1px]
+    }
+
+    .mce-content-body:not([dir=rtl]) blockquote {
+        border-left: 2px solid #ccc;
+        margin-left: 1.5rem;
+        padding-left: 1rem;
+    }
+
+    .mce-content-body[dir=rtl] blockquote {
+        border-right: 2px solid #ccc;
+        margin-right: 1.5rem;
+        padding-right: 1rem;
     }
 
 }

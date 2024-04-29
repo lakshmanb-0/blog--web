@@ -2,7 +2,7 @@ import { Logo, AuthModal } from "../"
 import { useState } from "react"
 import { LuPenSquare, IoPersonOutline } from "../reactIcons";
 import { type MenuProps, Avatar, Button, Dropdown, Input } from 'antd';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userLogout } from "@/appwrite/auth-appwrite";
 import { getFileView } from "@/appwrite/storage-appwrite";
 import { useDispatch, useSelector } from "react-redux"
@@ -11,12 +11,15 @@ import { RootState, logout } from "@/store";
 
 const Navbar: React.FC = () => {
     const { loggedIn, user } = useSelector((state: RootState) => state.auth)
-    const [searchInput, setSearchInput] = useState<string>('')
     const [type, setType] = useState<{ title: string, type: string }>({ title: '', type: '' })
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { Search } = Input;
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search);
+    const query = queryParams.get('q');
+    const [searchInput, setSearchInput] = useState<string>(query ?? '')
 
 
     const handleModalOpen = (title: string, type: string) => {
@@ -52,6 +55,9 @@ const Navbar: React.FC = () => {
             ),
         },]
 
+    const handleSubmit = () => {
+        navigate(`/search?q=${searchInput}`)
+    }
 
     return (
         <nav className="flex items-center justify-between p-4">
@@ -61,8 +67,8 @@ const Navbar: React.FC = () => {
                     placeholder="Search"
                     style={{ width: 200 }}
                     value={searchInput}
+                    onSearch={handleSubmit}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    allowClear
                 />
             </section>
             <section className="flex items-center gap-4">

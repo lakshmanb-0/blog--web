@@ -7,6 +7,7 @@ import store from './store/store.ts'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import { Header, Post, PostForm } from './components'
 import Profile from './pages/profile/Profile.tsx'
+import Search from './pages/search/Search.tsx'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path="/" element={<App />}>
@@ -15,6 +16,7 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route path="/post/:postId" element={<Post />} />
     <Route path="/post/:postId/edit/:userId" element={<PostForm type="edit" />} />
     <Route path="/profile" element={<Profile />} />
+    <Route path="/search" element={<Search />} />
   </Route>
 ))
 

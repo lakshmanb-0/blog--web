@@ -4,16 +4,17 @@ import { TypeCreatePost, TypeUpdatePost } from "@/types/types";
 import { Query } from "appwrite";
 
 
-export const listDocuments = async (userId?: string) => {
+export const listDocuments = async (userId?: string, search?: string) => {
     try {
         // let query = Query.equal("status", "public")
         const response = await databases.listDocuments(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID,
             [
                 Query.orderDesc('$createdAt'),
                 userId
-                    ? Query.equal('ownerId', `${userId}`) :
-                    Query.equal('status', ['public']),
+                    ? Query.equal('ownerId', `${userId}`)
+                    : Query.equal('status', ['public']),
 
+                search ? Query.search('title', search) : Query.equal('status', ['public']),
             ]
         );
         return response
@@ -23,7 +24,7 @@ export const listDocuments = async (userId?: string) => {
 }
 
 export const createPost = async (props: TypeCreatePost) => {
-    console.log(props);
+    // console.log(props);
 
     try {
         const response = await databases.createDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, uniqueId(), {
@@ -41,7 +42,7 @@ export const createPost = async (props: TypeCreatePost) => {
 }
 
 export const updatePost = async (props: TypeUpdatePost) => {
-    console.log(props);
+    // console.log(props);
     try {
         const response = await databases.updateDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, props.documentId, {
             title: props.title,

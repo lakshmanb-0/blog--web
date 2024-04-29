@@ -13,7 +13,7 @@ const Post = () => {
     const { postId } = useParams()
     const dispatch = useDispatch()
 
-    console.log(post);
+    // console.log(post);
 
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -21,7 +21,7 @@ const Post = () => {
         else {
             dispatch(setLoading(true))
             const fetchPost = async () => {
-                console.log(postId);
+                // console.log(postId);
                 let data = await getPost(postId ?? '')
                 data && dispatch(setSinglePost(data))
             }
