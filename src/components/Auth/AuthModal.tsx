@@ -1,39 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal as AntModal, Button, Form, Input, Upload } from 'antd';
 import { createAccount, userLogin } from "@/appwrite/auth-appwrite";
 import useToast from "@/hooks/useToast";
 import { login } from "@/store/authSlice";
 import { useDispatch } from "react-redux";
 import { createFile } from '@/appwrite/storage-appwrite';
+import { useNavigate } from 'react-router-dom';
 
 type TypeModalProps = {
     type: { type: string, title: string },
     isModalOpen: boolean,
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+    changeModalOpen: () => void
 }
-const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen }) => {
-    const [modalType, setModalType] = useState<TypeModalProps['type']>(({ title: '', type: '' }));
+
+const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, changeModalOpen }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     const showToast = useToast()
     const dispatch = useDispatch()
-
-    //setting modal type
-    useEffect(() => {
-        setModalType(type)
-    }, [type])
+    const navigate = useNavigate()
 
     //handle modal close
     const handleCancel = () => {
         form.resetFields() //reset form
-        setIsModalOpen(false);
+        changeModalOpen();
     };
 
     const handleSubmit = async (data: { email: string, password: string, name: string, upload: any }) => {
         setLoading(true);
         try {
             let userDetails;
-            if (modalType.type === 'Sign up') { // If sign up then create account 
+            if (type.type === 'Sign up') { // If sign up then create account 
                 userDetails = await createAccount(data.email, data.password, data.name)
                 data.upload && await createFile(data.upload[0].originFileObj); //image upload if image selected
             }
@@ -42,10 +39,11 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
             if (userDetails) {
                 dispatch(login(userDetails)) //store user in redux
                 {
-                    modalType.type === 'Sign up'
+                    type.type === 'Sign up'
                         ? showToast('success', 'Account created successfully')
                         : showToast('success', 'Login success')
                 } //show toast
+                navigate('/')
                 handleCancel() //close modal
 
             }
@@ -68,11 +66,11 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
             className='shadow-xl'
         >
             <section className='py-5'>
-                <h1 className='text-3xl w-full text-center py-3 uppercase font-semibold' >{modalType.title}</h1>
+                <h1 className='text-3xl w-full text-center py-3 uppercase font-semibold' >{type.title}</h1>
                 <Form form={form} onFinish={handleSubmit} className='py-5' labelCol={{ span: 7 }}>
 
                     {
-                        modalType.type === 'Sign up' &&
+                        type.type === 'Sign up' &&
                         <Form.Item
                             label="Name"
                             name="name"
@@ -121,7 +119,7 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
                     </Form.Item>
 
                     {
-                        modalType.type === 'Sign up' && (
+                        type.type === 'Sign up' && (
                             <>
                                 <Form.Item
                                     name="confirm"
@@ -179,6 +177,8 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
                                         Upload
                                     </Upload>
                                 </Form.Item>
+                                <p className="text-xs mt-1 text-[#a7a7a7]">{`(support only jpg, jpeg, png)`}</p>
+
                             </>
                         )}
 
@@ -191,7 +191,7 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
                                 className='w-full text-center py-2 mt-6 h-full'
                                 disabled={!!form.getFieldsError().filter(({ errors }) => errors.length).length}
                             >
-                                {modalType.type}
+                                {type.type}
                             </Button>
                         )}
                     </Form.Item>
@@ -201,4 +201,4 @@ const AuthModal: React.FC<TypeModalProps> = ({ type, isModalOpen, setIsModalOpen
     );
 };
 
-export default AuthModal;
+export default React.memo(AuthModal);

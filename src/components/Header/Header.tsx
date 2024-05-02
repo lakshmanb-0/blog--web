@@ -15,7 +15,7 @@ const Header = () => {
     }, []);
 
     return (
-        <header className="grid md:grid-cols-2 gap-5">
+        <header className="grid gap-5">
             {posts?.map((el: TypePost) => (
                 <PostCard key={el.$id} data={el} />
             ))}

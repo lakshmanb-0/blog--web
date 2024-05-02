@@ -10,26 +10,25 @@ const PostEditor = ({ editorValue, initialValue }: { editorValue: any, initialVa
             <section className={`${loading ? 'hidden' : ''} py-10`}>
                 <Editor
                     onLoadContent={() => setLoading(false)}
-
                     apiKey={conf.TINYMCE_API_KEY}
                     onInit={(_, editor) => editorValue.current = editor}
                     initialValue={initialValue}
-
                     init={{
-                        // content_css: 'css/content.css',
                         height: 500,
                         menubar: false,
                         plugins: [
                             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'codesample', 'preview'
+                            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'codesample', 'link', 'media',
                         ],
                         toolbar: 'undo redo | blocks | ' +
                             'bold italic forecolor | alignleft aligncenter ' +
                             'alignright | bullist numlist | ' +
-                            'removeformat  image codesample | preview ',
-
-                        image_caption: true
+                            'removeformat  image codesample | link | media ',
+                        image_caption: true,
+                        media_poster: false,
+                        media_dimensions: false,
+                        media_alt_source: false
 
                     }}
                 />

@@ -24,7 +24,6 @@ export const listDocuments = async (userId?: string, search?: string) => {
 }
 
 export const createPost = async (props: TypeCreatePost) => {
-    // console.log(props);
 
     try {
         const response = await databases.createDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, uniqueId(), {
@@ -42,7 +41,6 @@ export const createPost = async (props: TypeCreatePost) => {
 }
 
 export const updatePost = async (props: TypeUpdatePost) => {
-    // console.log(props);
     try {
         const response = await databases.updateDocument(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID, props.documentId, {
             title: props.title,

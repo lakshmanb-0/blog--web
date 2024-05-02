@@ -1,29 +1,25 @@
-import { deleteFile, getFileView } from '@/appwrite/storage-appwrite';
-import { Avatar, Popconfirm } from 'antd';
-import { userFirstTwoLetters } from '../Navbar/Navbar';
+import { deleteFile, getFilePreview } from '@/appwrite/storage-appwrite';
+import { Avatar, Button, Popconfirm } from 'antd';
 import { TypePost } from '@/types/types';
 import moment from 'moment'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePost } from '@/appwrite/database-appwrite';
 import { RootState, removePost } from '@/store';
-import { MdDelete, MdModeEditOutline } from '../reactIcons'
+import { userFirstTwoLetters } from '@/conf/utils';
+
 type Props = {
     post: TypePost
-    variant: string
 }
 
-const UserBar: React.FC<Props> = ({ post, variant }) => {
+const UserBar: React.FC<Props> = ({ post }) => {
     const { user } = useSelector((state: RootState) => state.auth)
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const location = useLocation()
 
-    const handleEditDocument = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation()
+    const handleEditDocument = async () => {
         navigate(`/post/${post.$id}/edit/${post.ownerId}`, { state: { ...post } })
     }
-    // console.log(location);
 
     const handleDeleteDocument = async () => {
         await deletePost(post.$id!)
@@ -33,34 +29,30 @@ const UserBar: React.FC<Props> = ({ post, variant }) => {
     }
 
     return post.$id && (
-        <section className='flex items-center gap-3'>
-            <div>
-                <Avatar src={getFileView(post.ownerId)} className="uppercase" size={40}>{userFirstTwoLetters(post.ownerName ?? '')}</Avatar>
-            </div>
-            <div className={`flex items-center  ${variant == 'vertical' ? 'flex-col' : 'gap-3'}`}>
-                <h1>{post.ownerName}</h1>
+        <section className='flex items-center gap-3 py-2 flex-wrap'>
+            <div className='flex items-center gap-3'>
+                <Avatar src={getFilePreview(post.ownerId) ?? ''} className="uppercase" size={35}>{userFirstTwoLetters(post.ownerName)}</Avatar>
+                <h1 className='truncate capitalize'>{post.ownerName}</h1>
                 <p className='text-[#707070] text-sm'>{moment(post.$createdAt).format('LL')}</p>
             </div>
             {
-                (location.pathname != '/' && post.ownerId == user.$id) && (
-                    <div className='ml-auto flex gap-1 '>
-                        <button onClick={handleEditDocument} className='hover:animate-bounce cursor-pointer' title='Edit'>
-                            <MdModeEditOutline size={20} color='green' />
-                        </button>
+                post.ownerId == user.$id && (
+                    <div className='ml-auto flex gap-2 '>
+                        <Button onClick={handleEditDocument} type='dashed' className='  cursor-pointer' title='Edit'>
+                            Edit
+                        </Button>
                         <Popconfirm
                             title="Delete the task"
                             description="Are you sure to delete this task?"
                             onConfirm={handleDeleteDocument}
                             okText="Yes"
                             cancelText="No"
-                            className='hover:animate-bounce'
                         >
-                            <MdDelete color='red' size={20} className='cursor-pointer' title='Delete' />
+                            <Button danger type='dashed'>Delete</Button>
                         </Popconfirm>
                     </div>
                 )
             }
-
         </section>
     )
 }

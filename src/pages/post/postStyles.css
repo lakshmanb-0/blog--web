@@ -32,15 +32,19 @@
     }
 
     code {
-        @apply bg-[#282C34] px-1 rounded text-white text-lg
+        @apply bg-[#F2F2F2] p-1 rounded text-base
     }
 
     pre {
-        @apply bg-[#282C34] rounded text-white text-lg w-full p-4 select-none whitespace-break-spaces
+        @apply bg-[#F9F9F9] rounded w-full p-4
+    }
+
+    iframe {
+        @apply aspect-video mx-auto
     }
 
     pre code {
-        @apply bg-transparent
+        @apply bg-transparent text-sm
     }
 
     ol {
@@ -55,51 +59,8 @@
         @apply list-outside
     }
 
-    table {
-        @apply border-collapse;
-    }
-
-    /* Apply a default padding if legacy cellpadding attribute is missing */
-    table:not([cellpadding]) th,
-    table:not([cellpadding]) td {
-        @apply p-2
-    }
-
-    /* Set default table styles if a table has a positive border attribute
-         and no inline css */
-    table[border]:not([border="0"]):not([style*="border-width"]) th,
-    table[border]:not([border="0"]):not([style*="border-width"]) td {
-        @apply border-[1px]
-    }
-
-    /* Set default table styles if a table has a positive border attribute
-         and no inline css */
-    table[border]:not([border="0"]):not([style*="border-style"]) th,
-    table[border]:not([border="0"]):not([style*="border-style"]) td {
-        @apply border-solid
-    }
-
-    /* Set default table styles if a table has a positive border attribute
-         and no inline css */
-    table[border]:not([border="0"]):not([style*="border-color"]) th,
-    table[border]:not([border="0"]):not([style*="border-color"]) td {
-        @apply border-[#ccc]
-    }
-
     hr {
         @apply border-[#ccc] border-solid border-t-[1px]
-    }
-
-    .mce-content-body:not([dir=rtl]) blockquote {
-        border-left: 2px solid #ccc;
-        margin-left: 1.5rem;
-        padding-left: 1rem;
-    }
-
-    .mce-content-body[dir=rtl] blockquote {
-        border-right: 2px solid #ccc;
-        margin-right: 1.5rem;
-        padding-right: 1rem;
     }
 
 }

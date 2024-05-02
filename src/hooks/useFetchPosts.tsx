@@ -14,9 +14,12 @@ export const useFetchPosts = () => {
                 return data ?? []
             }
             dispatch(setPosts(postData.documents))
+        } catch (error) {
+            console.log('fetch posts', error);
         }
-        catch (error) { console.log('fetch posts', error); }
-        finally { dispatch(setLoading(false)) }
+        finally {
+            dispatch(setLoading(false))
+        }
     };
 
 }

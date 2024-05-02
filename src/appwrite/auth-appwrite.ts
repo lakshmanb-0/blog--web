@@ -25,8 +25,6 @@ export const createAccount = async (email: string, password: string, name: strin
 export const userLogin = async (email: string, password: string) => {
     try {
         let userAccount = await account.createEmailSession(email, password);
-        console.log(userAccount);
-
         if (userAccount) {
             return currentUser()
         } else {

@@ -1,12 +1,13 @@
-import { Logo, AuthModal } from "../"
-import { useState } from "react"
+import { Logo, AuthModal } from "../index"
+import { useCallback, useState } from "react"
 import { LuPenSquare, IoPersonOutline } from "../reactIcons";
 import { type MenuProps, Avatar, Button, Dropdown, Input } from 'antd';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userLogout } from "@/appwrite/auth-appwrite";
-import { getFileView } from "@/appwrite/storage-appwrite";
+import { getFilePreview } from "@/appwrite/storage-appwrite";
 import { useDispatch, useSelector } from "react-redux"
 import { RootState, logout } from "@/store";
+import { userFirstTwoLetters } from "@/conf/utils";
 
 
 const Navbar: React.FC = () => {
@@ -15,11 +16,11 @@ const Navbar: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const { Search } = Input;
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('q');
     const [searchInput, setSearchInput] = useState<string>(query ?? '')
+    const { Search } = Input;
 
 
     const handleModalOpen = (title: string, type: string) => {
@@ -32,6 +33,10 @@ const Navbar: React.FC = () => {
         dispatch(logout())
         navigate('/')
     }
+
+    const changeModalOpen = useCallback(() => {
+        setIsModalOpen(false)
+    }, [setIsModalOpen])
 
     const items: MenuProps['items'] = [
         {
@@ -60,7 +65,7 @@ const Navbar: React.FC = () => {
     }
 
     return (
-        <nav className="flex items-center justify-between p-4">
+        <nav className="flex items-center justify-between max-w-[1600px] mx-auto px-2">
             <section className="flex items-center gap-4">
                 <Logo width={100} />
                 <Search
@@ -76,24 +81,21 @@ const Navbar: React.FC = () => {
                     type="text"
                     className="text-lg flex items-center"
                     icon={<LuPenSquare size={20} />}
-                    onClick={() => !
-                        loggedIn
+                    onClick={() => !loggedIn
                         ? handleModalOpen('Create an account to start writing', 'Sign up')
                         : navigate('/new-story')}
                 >
                     Write
                 </Button>
-                {!loggedIn
-                    ? (
-                        <>
-                            <Button className="rounded-lg bg-black" type="primary" onClick={() => handleModalOpen('Join Us', 'Sign up')}>Sign up</Button>
-                            <Button className="rounded-lg" type="text" onClick={() => handleModalOpen('Welcome back', 'Sign in')}>Sign in</Button>
-                            <AuthModal type={type} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-                        </>
-                    )
-                    : <Dropdown menu={{ items }}>
-                        <Avatar src={getFileView(user.$id)} className="uppercase">{userFirstTwoLetters(user.name)}</Avatar>
+                {!!loggedIn
+                    ? <Dropdown menu={{ items }}>
+                        <Avatar src={getFilePreview(user.$id)} className="uppercase">{userFirstTwoLetters(user.name)}</Avatar>
                     </Dropdown>
+                    : <>
+                        <Button className="rounded-lg bg-black" type="primary" onClick={() => handleModalOpen('Join Us', 'Sign up')}>Sign up</Button>
+                        <Button className="rounded-lg" type="text" onClick={() => handleModalOpen('Welcome back', 'Sign in')}>Sign in</Button>
+                        <AuthModal type={type} isModalOpen={isModalOpen} changeModalOpen={changeModalOpen} />
+                    </>
                 }
             </section>
         </nav>
@@ -102,9 +104,3 @@ const Navbar: React.FC = () => {
 
 export default Navbar;
 
-export const userFirstTwoLetters = (text: string) => {
-    let words = text.split(' ');
-    let firstLetter = words[0] ? words[0][0] : '';
-    let secondLetter = words[1] ? words[1][0] : '';
-    return firstLetter + secondLetter;
-}

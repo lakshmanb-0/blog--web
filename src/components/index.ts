@@ -1,5 +1,4 @@
 import Navbar from "./Navbar/Navbar";
-import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
 
 import Logo from "./Logo";
@@ -11,5 +10,5 @@ import PostForm from "@/pages/new-story/PostForm";
 import PostCard from "./ui/PostCard";
 
 export {
-    Footer, Header, Navbar, Logo, AuthModal, PostEditor, PostForm, Post, PostCard
+    Header, Navbar, Logo, AuthModal, PostEditor, PostForm, Post, PostCard
 }

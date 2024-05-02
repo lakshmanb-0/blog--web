@@ -24,14 +24,14 @@ const PostCard: React.FC<Props> = ({ data }) => {
     }
 
     return (
-        <div key={data.$id} className="cursor-pointer py-10" onClick={(handlePostEvent)}>
-            <UserBar post={data} variant='horizontal' />
-            <div className="flex gap-4" >
+        <div key={data.$id} className="cursor-pointer py-10 border-b-[1px] border-[#ccc]/[0.5] px-4" >
+            <UserBar post={data} />
+            <div className="flex gap-5 sm:gap-20" onClick={(handlePostEvent)}>
                 <div className="overflow-hidden flex-1">
-                    <h1 className="font-bold text-lg py-2">{data.title}</h1>
-                    <p className="line-clamp-3 text-base">{handleContentData()}</p>
+                    <h1 className="font-bold text-lg py-2 ">{data.title}</h1>
+                    <p className="line-clamp-3 text-base hidden sm:line-clamp-3">{handleContentData()}</p>
                 </div>
-                {data.imageId && <img src={getFilePreview(data.imageId)} alt="" className="size-40 object-cover" />}
+                {data.imageId && <img src={getFilePreview(data.imageId)} alt="" className="aspect-video w-[30%] sm:size-40 object-cover" />}
             </div>
         </div>
     )

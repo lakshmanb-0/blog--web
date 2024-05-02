@@ -1,8 +1,7 @@
 import { message } from 'antd';
-import { useCallback } from 'react';
 
 const useToast = () => {
-    const showMessage = useCallback((type: string, text: string) => {
+    return (type: string, text: string) => {
         switch (type) {
             case 'error':
                 message.error(text);
@@ -19,9 +18,7 @@ const useToast = () => {
             default:
                 message.info(text);
         }
-    }, []);
-
-    return showMessage;
+    }
 };
 
 export default useToast;
