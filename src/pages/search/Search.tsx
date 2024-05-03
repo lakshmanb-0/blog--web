@@ -30,9 +30,11 @@ const Search = () => {
 
     return (
         <div>
+            <h1 className="text-3xl font-semibold py-5 text-center">Search results for: {query}</h1>
             {searchResults?.map((el: TypePost) => (
                 <PostCard key={el.$id} data={el} />
             ))}
+            {searchResults?.length === 0 && <p>No result found for </p>}
         </div>
     )
 }

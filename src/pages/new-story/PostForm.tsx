@@ -58,9 +58,9 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
             if (editorRef.current) {
                 if (!!location?.state?.$id) { // update post
                     if (location?.state.ownerId != user.$id) return showToast('error', 'You are not authorized to update this post');
-                    let ImageId = data?.upload?.[0]?.originFileObj && await updateFile(location?.state?.imageId, data?.upload?.[0]?.originFileObj ?? null);
+                    let ImageId = data?.upload?.[0]?.originFileObj && await updateFile(location?.state?.imageId, data?.upload?.[0]?.originFileObj);
                     let file = await getFile(location?.state?.imageId);
-                    let post = await updatePost({ ...props, imageId: !!ImageId?.$id ? ImageId?.$id : file ? location?.state?.imageId : null });
+                    let post = await updatePost({ ...props, imageId: !!ImageId?.$id ? ImageId?.$id : !!file ? location?.state?.imageId : null });
 
                     if (post) {
                         showToast('success', 'post updated successfully');
@@ -91,7 +91,7 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
         }
     };
 
-    return (location.pathname.includes(user.$id) || location.pathname === '/new-story') ? (
+    return (
         <Spin spinning={loading}>
             <Form form={form}
                 onFinish={handleSubmit}
@@ -178,7 +178,6 @@ const PostForm = ({ type }: { type: 'create' | 'edit' }) => {
             </Form>
         </Spin>
     )
-        : <div>you are not allowed to edit this post</div>
 }
 
 export default PostForm

@@ -1,7 +1,7 @@
 import { Logo, AuthModal } from "../index"
 import { useCallback, useState } from "react"
 import { LuPenSquare, IoPersonOutline } from "../reactIcons";
-import { type MenuProps, Avatar, Button, Dropdown, Input } from 'antd';
+import { type MenuProps, Avatar, Button, Dropdown, AutoComplete } from 'antd';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userLogout } from "@/appwrite/auth-appwrite";
 import { getFilePreview } from "@/appwrite/storage-appwrite";
@@ -20,7 +20,6 @@ const Navbar: React.FC = () => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('q');
     const [searchInput, setSearchInput] = useState<string>(query ?? '')
-    const { Search } = Input;
 
 
     const handleModalOpen = (title: string, type: string) => {
@@ -43,7 +42,7 @@ const Navbar: React.FC = () => {
             key: '1',
             label: (
                 <Link to="/profile" className="flex items-center gap-1">
-                    <IoPersonOutline size={20} /> <span>Profile</span>
+                    <IoPersonOutline size={20} /> <span>My Posts</span>
                 </Link>
             ),
         },
@@ -61,20 +60,50 @@ const Navbar: React.FC = () => {
         },]
 
     const handleSubmit = () => {
+        let previous = JSON.parse(localStorage.getItem('recentSearch')!).filter((el: string) => el != searchInput).slice(0, 5)
+        localStorage.setItem('recentSearch', JSON.stringify([searchInput, ...previous ?? '']))
         navigate(`/search?q=${searchInput}`)
     }
+
+    const recentSearch = () => {
+        let storage = JSON.parse(localStorage.getItem('recentSearch')!)
+        let options: any = []
+        storage?.map((el: string) => {
+            options.push({
+                value: el,
+                label: (
+                    <span>
+                        {el}
+                    </span>
+                ),
+            })
+        })
+        return options ?? []
+    }
+
+    const options = [
+        {
+            label: <span>Recent Searches</span>,
+            options: recentSearch(),
+        },
+    ];
 
     return (
         <nav className="flex items-center justify-between max-w-[1600px] mx-auto px-2">
             <section className="flex items-center gap-4">
                 <Logo width={100} />
-                <Search
+                <AutoComplete
+                    popupClassName="certain-category-search-dropdown"
                     placeholder="Search"
-                    style={{ width: 200 }}
+                    style={{ width: 250 }}
+                    options={options}
+                    onSelect={(e) => navigate(`/search?q=${e}`)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                     value={searchInput}
-                    onSearch={handleSubmit}
-                    onChange={(e) => setSearchInput(e.target.value)}
+                    onChange={(e) => setSearchInput(e)}
+                    size="large"
                 />
+
             </section>
             <section className="flex items-center gap-4">
                 <Button

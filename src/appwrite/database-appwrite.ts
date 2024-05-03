@@ -4,12 +4,14 @@ import { TypeCreatePost, TypeUpdatePost } from "@/types/types";
 import { Query } from "appwrite";
 
 
-export const listDocuments = async (userId?: string, search?: string) => {
+export const listDocuments = async (userId?: string, search?: string, take?: number, skip?: number) => {
     try {
         // let query = Query.equal("status", "public")
         const response = await databases.listDocuments(conf.APPWRITE_DATABASE_ID, conf.APPWRITE_COLLECTION_ID,
             [
                 Query.orderDesc('$createdAt'),
+                Query.limit(take ?? 10),
+                Query.offset(skip ?? 0),
                 userId
                     ? Query.equal('ownerId', `${userId}`)
                     : Query.equal('status', ['public']),
