@@ -1,6 +1,7 @@
 # Blog Website
 
 <img src='https://i.postimg.cc/JnXTTgpV/214shots-so.png' />
+
 ## Overview
 This project is a ReactJS-based application that seamlessly integrates App-write for back-end functionality and storage, ensuring secure data handling. Redux Toolkit efficiently manages state, while performance optimization through React hooks enhances user experience. Additionally, the project employs the Tinymce editor for rich text editing, enhancing content creation with intuitive formatting options and ensuring a polished look for blog posts. Pagination is implemented for efficient navigation through blog posts, while Ant Design components contribute to a sleek and responsive user interface design.
 
